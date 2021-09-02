@@ -1,0 +1,400 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "id": "increasing-round",
+   "metadata": {},
+   "source": [
+    "# Guided Programming 3 - Solve any equation (bisection)\n",
+    "\n",
+    "**Mathematical Methods for Chemical Engineers (MTHS1008)**\n",
+    "\n",
+    "**Dr Matthew Scase**\n",
+    "\n",
+    "We have seen in Guided Programming 1 and Guided Programming 2 how to solve two types of equations that we are familiar with, quadratic equations and simultaneous equations.  But we already knew how to do that!\n",
+    "\n",
+    "In this notebook we will revisit the problem of solving a quadratic equation but we will use a method that means we will be able to solve any equation of the form\n",
+    "\n",
+    "$$f(x) = 0.$$\n",
+    "\n",
+    "This form of equation includes the quadratic equation we looked at previously\n",
+    "\n",
+    "\\begin{equation*}\n",
+    "2x^2 - 7x + 6 = 0,\n",
+    "\\label{eq:quadratic} \\tag{1}\n",
+    "\\end{equation*}\n",
+    "\n",
+    "(where $f(x) = 2x^2 - 7x + 6$ in this case) but this form also includes equations that are similar but not exactly quadratic.  We can well imagine that the equation\n",
+    "\n",
+    "$$2x^{1.9} - 7x + 6 = 0,$$\n",
+    "\n",
+    "has solutions that are close to the solutions of \\eqref{eq:quadratic}, but we cannot use the quadratic formula to find these solutions anymore.  More generally, even simply expressed mathematical equations, such as \n",
+    "\n",
+    "$$\\cos x = x,$$\n",
+    "\n",
+    "do not have simple solutions of the form we are used to being able to find at school.  However, we can define in this case $f(x) = \\cos x - x$ and look for a solution of $f(x)=0$ using the methods we shall implement below. [Spoiler alert: $x$ is about 0.7391 for this equation!]\n",
+    "\n",
+    "In practical engineering applications we are frequently confronted with equations of the form $f(x) = 0$ that we need to solve, but no formula for their solution exists.  In this notebook we will implement a strategy for solving these types of equation known as the **method of bisection**.\n",
+    "\n",
+    "## The method of bisection\n",
+    "\n",
+    "We are seeking the special value of $x$ that satisfies $f(x)=0$.  Our strategy is to trap this special value of $x$ between to endpoints, let's call them $x_L$ and $x_R$, and then systematically move our endpoints closer and closer to each other ensuring that $x$ remains trapped between the endpoints.  When our endpoints are sufficiently close to each other, say within a tolerance of $10^{-6}$ then we have a numerical approximation to the solution of our equation that is accurate to 6 decimal places for example and we can stop.\n",
+    "\n",
+    "### Trapping the solution\n",
+    "\n",
+    "We need to provide two endpoints to use our method; $x_L$ and $x_R$, where $x_L$ is less than the true solution $x$ and $x_R$ is greater than the true solution $x$"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "unique-waste",
+   "metadata": {},
+   "source": [
+    "![texte](bisectionFigs/slide1_crop.png)\n",
+    "\n",
+    "$$\\textbf{Figure 1}$$"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "defensive-vienna",
+   "metadata": {},
+   "source": [
+    "We can see in Figure 1 above the curve $y = f(x)$.  The solution of our problem, or desired \"root\", is the special value of $x$ for which $f(x) = 0$, this is indicated by the blue circle on $y = 0$.  The endpoint $x_L$ is less than the root and we can see that $f(x_L)<0$;  $x_L$ is a lower estimate for the desired root.  The endpoint $x_R$ is greater than the root and we can see that $f(x_R)>0$; $x_R$ is an upper estimate for the desired root.  It is *essential* that the root lies inbetween the two endpoints.\n",
+    "\n",
+    "For the method to work we must ensure that $f(x_L)$ and $f(x_R)$ have opposite signs.  It does not matter whether $f(x_L)<0$ and $f(x_R)>0$, as shown in Figure 1, or $f(x_L)>0$ and $f(x_R)<0$.  But before we begin we must ensure that the condition $f(x_L)f(x_R) < 0$ is satisfied as this guarantees that $f(x_L)$ and $f(x_R)$ have different signs.\n",
+    "\n",
+    "Let us assume that we have chosen two suitable values of $x_L$ and $x_R$ so that we can begin our method\n",
+    "\n",
+    "- Step 1: Calculate the midpoint"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "inclusive-hawaii",
+   "metadata": {},
+   "source": [
+    "![texte](bisectionFigs/slide2_crop.png)\n",
+    "\n",
+    "$$\\textbf{Figure 2}$$"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "dynamic-generic",
+   "metadata": {},
+   "source": [
+    "We calculate the *midpoint* between $x_L$ and $x_R$ using\n",
+    "$$x_M = \\frac{x_L + x_R}{2}.$$\n",
+    "The midpoint is exactly halfway between $x_L$ and $x_R$, bisecting our endpoints - hence the name of the method.\n",
+    "\n",
+    "The midpoint of the values of $x_L$ and $x_R$ in Figure 1 has been calculated and plotted in Figure 2.  We can immediately see that the midpoint value $x_M$ is a much better *lower estimate* of the desired root than $x_L$.  So we can redefine our lower limit $x_L$ and being equal to the new midpoint value $x_L$.\n",
+    "\n",
+    "Observing that $x_M$ is a much better lower estimate than $x_L$ is straightforward from looking at Figure 2 - but how do we get Python to work out that it is the lower estimate that is improved and not the upper estimate?  If we replace the upper limit $x_R$ with the midpoint then we would no-longer be trapping our solution and the method would fail.\n",
+    "\n",
+    "We see that it is the lower limit that gets updated in this case since $f(x_M)$ has the *same sign* as $f(x_L)$.  This means that both $x_M$ and $x_L$ are the same side of the desired root.  If $f(x_M)$ had been positive (in the case illustrated) then we would have updated the upper estimate.\n",
+    "\n",
+    "    If f(x_L)f(x_M) > 0: \n",
+    "\n",
+    "then $x_L$ and $x_M$ are the same side of the root and we update the lower estimate\n",
+    "\n",
+    "        x_L = x_M\n",
+    "    else:\n",
+    "    \n",
+    "$x_L$ and $x_M$ are opposite sides of the root and we update the upper estimate\n",
+    "\n",
+    "        x_R = x_M\n",
+    "        \n",
+    "- Step 2 Use the midpoint to narrow the distance between the endpoints.\n",
+    "\n",
+    "    So for the illustrated case we update the lower estimate, setting it equal to the midpoint"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "impressed-orange",
+   "metadata": {},
+   "source": [
+    "![texte](bisectionFigs/slide3_crop.png)\n",
+    "\n",
+    "$$\\textbf{Figure 3}$$"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "particular-accreditation",
+   "metadata": {},
+   "source": [
+    "Now we go back to Step 1 and recalculate the midpoint based on our new endpoint.  This is shown in Figure 3.  The original lower estimate is shown in light blue, our new updated lower estimate is at $x_L$ and we have a new midpoint, $x_M$.\n",
+    "\n",
+    "This time we see that $f(x_M)>0$ meaning that for the case shown $f(x_L)$ and $f(x_M)$ have opposite signs and that therefore the desired root is trapped between $x_L$ and $x_M$.  We have that $x_M$ is an improved upper estimate of the desired root and so in Step 2 we update $x_R$ by setting $x_R = x_M$."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "gothic-report",
+   "metadata": {},
+   "source": [
+    "![texte](bisectionFigs/slide4_crop.png)\n",
+    "\n",
+    "$$\\textbf{Figure 4}$$"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "simple-aggregate",
+   "metadata": {},
+   "source": [
+    "As can be seen from Figure 4, when we go back to Step 1 and recalculate the midpoint we now have a very good estimate of our desired root.\n",
+    "\n",
+    "We can keep iterating around Steps 1 and 2 until our numerical solution is accurate enough for our application.  We know that our root is always trapped between $x_L$ and $x_R$, so if the distance between $x_L$ and $x_R$ is less than a given tolerance that we can specify then we know our solution is accurate.\n",
+    "\n",
+    "We could define a variable called `tol` that the user can set to achieve a certain desired accuracy.  NASA landed on the Moon working to six decimal places, so we don't need millions and millions of decimal places for most applications.  We can terminate our iterative process when\n",
+    "\n",
+    "$$|x_R - x_L| < \\textrm{tol}$$\n",
+    "\n",
+    "which we can code as a `while loop`\n",
+    "\n",
+    "    tol = 10**(-6)\n",
+    "    err = tol + 1  # This just needs to be a number larger than tol so that the while loop starts!\n",
+    "    \n",
+    "    while err > tol:\n",
+    "    \n",
+    "        Iterate around Steps 1 and 2\n",
+    "        \n",
+    "        err = abs(xR - xL)\n",
+    "        \n",
+    "## Implementing the method in Python\n",
+    "\n",
+    "It is **very important** when writing some code to solve a problem that you start on a problem you already know the answer to.  Let's start with \n",
+    "\n",
+    "\\begin{equation*}\n",
+    "    f(x) = 2x^2 - 7x + 6\n",
+    "    \\label{eq:f1} \\tag{2}\n",
+    "\\end{equation*}\n",
+    "\n",
+    "and look for solutions $x$ that satisfy $f(x) = 0$.  We know that $x=2$ and $x = \\frac{3}{2}$ satisfy \\eqref{eq:f1} so if we begin our method with $x_L = 1.75$ and $x_R = 3$ we should be trapping the solution $x=2$ between our two endpoints.  Let us try and find the solution to within 6 decimal places by first defining `tol` equal to $10^{-6}$ and setting our initial endpoint estimates `xL` and `xR`."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "id": "scenic-pointer",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "tol = 10**(-6) # .. This defines the \"tolerance\" or accuracy of our solution\n",
+    "xL = 1.75 # ....... This is our initial lower estimate of the actual root\n",
+    "xR = 3 # .......... This is our initial lower estimate of the actual root"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "ultimate-prisoner",
+   "metadata": {},
+   "source": [
+    "Our `while` loop will keep going until our solution is accurate enough.  It will do this by checking to see whether our uncertainty, or error, `err`, is greater than or less than our specified tolerance, `tol`.  In order to force the while loop to start iterating therefore it is necessary that `err` initially be greater than whatever tolerance is entered by the user.  One way to do this is to set"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "id": "driven-emphasis",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "err = tol + 1 # ... Initialize our error to a value greater than tol"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "graduate-parliament",
+   "metadata": {},
+   "source": [
+    "We will keep track of our endpoints and our midpoint in a *list*, we can call this list `xPts` as it is storing the three $x$ points that we are interested in at any given time.\n",
+    "\n",
+    "The first element of the list will be our lower estimate, the middle element of the list will be our midpoint, and the third element of the list will be our upper estimate.  Remember that therefore `xPts[0]` will be the lower estimate, `xPts[1]` the midpoint and `xPts[2]` the upper estimate."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "id": "selected-gates",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "xPts = [xL, (xL + xR)/2, xR]"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "radical-carnival",
+   "metadata": {},
+   "source": [
+    "Now we are able to begin our `while` loop.  \n",
+    "\n",
+    "- First we will calculate a new midpoint based on whatever is currently in the list in first and last positions\n",
+    "\n",
+    "        xPts[1] = (xPts[0] + xPts[2])/2\n",
+    "        \n",
+    "- Next we will need to calculate $f(x)$ for all three values of $x$ stored in `xPts` so that we can decide whether it is the upper or lower estimate that needs updating.  We can do this using a **list comprehension** as we did in Guided Programming 2.  This is the only line of code in the algorithm where our equation $f(x)$ appears!  This means it will be very easy to adapt to *any equation we want to solve*!\n",
+    "\n",
+    "        f = [(2*x**2 - 7*x + 6) for x in xPts]\n",
+    "        \n",
+    "    Python will go through every value of `x` that it finds in `xPts` and calculate $2x^2 - 7x + 6$.  These values will be stored in a new list called `f`.  The value stored in `f[0]` will be equal to $f(x_L)$, the value in `f[1]` will be equal to $f(x_M)$ and the value in `f[2]` will be equal to $f(x_R)$.\n",
+    "    \n",
+    "- Now we are able to decide whether to update the lower estimate or the upper estimate by calculating `f[0]f[1]`.  If `f[0]f[1]` is greater than 0 then the sign of $f(x_M)$ is equal to the sign of $f(x_L)$ and we update the lower estimate `xPts[0]` to be equal to the midpoint `xPts[1]`, else we update the upper estimate `xPts[2]` to be equal to the midpoint `xPts[1]`.\n",
+    "\n",
+    "        if f[0]*f[1] >= 0:\n",
+    "            xPts[0] = xPts[1]\n",
+    "        else:\n",
+    "            xPts[2] = xPts[1]\n",
+    "            \n",
+    "- Finally we update the distance between our two endpoints, our \"error\" by recalculating `err` based on the new endpoints `xPts[2]` and `xPts[0]`.  If the distance between these two points is small enough our while loop will exit.  Otherwise we will iterate again.\n",
+    "\n",
+    "       err = xPts[2] - xPts[0]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "id": "signal-preparation",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "while err > tol:\n",
+    "    xPts[1] = (xPts[0] + xPts[2])/2\n",
+    "    f = [(2*x**(1.9) - 7*x + 6) for x in xPts]\n",
+    "    \n",
+    "    if f[0]*f[1] >= 0:\n",
+    "        xPts[0] = xPts[1]\n",
+    "    else:\n",
+    "        xPts[2] = xPts[1]\n",
+    "            \n",
+    "    err = xPts[2] - xPts[0]"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "grave-basic",
+   "metadata": {},
+   "source": [
+    "Now we can write out our solution to the screen, the current midpoint `xPts[1]` is our best estimate."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "id": "animal-initial",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "x =  2.5539051294326782\n"
+     ]
+    }
+   ],
+   "source": [
+    "print('x = ', xPts[1])"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "diagnostic-quarter",
+   "metadata": {},
+   "source": [
+    "The correct answer to 6 decimal places!\n",
+    "\n",
+    "## Exercises\n",
+    "\n",
+    "- Try modifying the code to solve the near quadratic\n",
+    "    $$x^{1.9} - 7x + 6 = 0$$\n",
+    "  using the same initial guess and tolerance as above.  You should find the solution is approximately\n",
+    "   $$x = 2.553905$$\n",
+    "  [Hint: Did you remember to reset the value of `err` before beginning?]\n",
+    "  \n",
+    "- Add some code that ensures that we have trapped the root before beginning to iterate.  If we had chosen different endpoints above we would have had a `while` loop that looped forever!\n",
+    "\n",
+    "- What happens when you try and solve the equation $\\frac{1}{x} = 0$ with endpoints $x_L < 0$, $x_R > 0$?  The code thinks that $x=0$ is a solution! Disaster!  What has happened?  Write some code that lets the user know that the found solution is not a good solution.\n",
+    "\n",
+    "- Modify the code so that the user can specify a maximum number of iterations before the code exits.\n",
+    "\n",
+    "## Example Code"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 6,
+   "id": "needed-world",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "After 21 iterations the solution found is x= 2.0000003576278687\n",
+      "f(x) is approximately 3.576281244477286e-07\n"
+     ]
+    }
+   ],
+   "source": [
+    "# USER SPECIFIED PARAMETERS\n",
+    "tol = 10**(-6) # .. This defines the \"tolerance\" or accuracy of our solution\n",
+    "xL = 1.75 # ....... This is our initial lower estimate of the actual root\n",
+    "xR = 3 # .......... This is our initial lower estimate of the actual root\n",
+    "iterMax = 25 # .... Maximum number of iterations\n",
+    "\n",
+    "# DEPENDENT PARAMETERS\n",
+    "err = tol + 1 # ... Initialize our error to a value greater than tol\n",
+    "counter = 0 # ..... Variable to count the number of iterations carried out\n",
+    "trapped = True # . Flag to decide whether our root is trapped or not\n",
+    "\n",
+    "xPts = [xL, (xL + xR)/2, xR]\n",
+    "\n",
+    "while err > tol and counter < iterMax and trapped == True:\n",
+    "    xPts[1] = (xPts[0] + xPts[2])/2\n",
+    "    f = [2*x**2 - 7*x + 6 for x in xPts]\n",
+    "    \n",
+    "    if f[0]*f[2] > 0: # Check that a \"solution\" is trapped\n",
+    "        trapped = False\n",
+    "    \n",
+    "    if f[0]*f[1] >= 0:\n",
+    "        xPts[0] = xPts[1]\n",
+    "    else:\n",
+    "        xPts[2] = xPts[1]\n",
+    "            \n",
+    "    err = abs(xPts[2] - xPts[0])\n",
+    "    counter = counter + 1 # Add 1 to our counter, the number of iterations\n",
+    "    \n",
+    "if trapped == True:\n",
+    "    print('After', counter, 'iterations the solution found is x=', xPts[1])\n",
+    "    print('f(x) is approximately', f[1])\n",
+    "else:\n",
+    "    print('No root trapped between endpoints.  No solution found')"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.9.2"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}
