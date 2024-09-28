@@ -1,0 +1,809 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="./" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>1.5. Matrix Multiplication &#8212; Mathematical Methods for Chemical and Environmental Engineering</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=a3416100" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="_static/proof.css?v=b4b7a797" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="_static/style.css?v=8c86e95b" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="_static/copybutton.js?v=f281be69"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"tex": {"macros": {"myfrac": ["\\frac{#1}{#2}", 2], "argmax": ["\\operatorname*{arg\\,max}"], "ptl": "\\partial", "partd": ["\\frac{\\ptl#1}{\\ptl#2}", 2]}}, "options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'matrix_multiplication';</script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="1.6. Special Matrices" href="special_matrices.html" />
+    <link rel="prev" title="1.4. Matrix Algebra" href="matrix_add_sub.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="_static/UoNTransparent.png" class="logo__image only-light" alt="Mathematical Methods for Chemical and Environmental Engineering - Home"/>
+    <script>document.write(`<img src="_static/UoNTransparent.png" class="logo__image only-dark" alt="Mathematical Methods for Chemical and Environmental Engineering - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="intro.html">
+                    Mathematical Methods for Chemical and Environmental Engineering - MTHS1008
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Mathematical Methods for Chemical and Environmental Engineering</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="linear_systems.html">1. Linear Systems</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="introduction_to_linear_systems.html">1.1. Introduction to Linear Systems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="further_linear_systems.html">1.2. Further Linear Systems: 3 x 3 Systems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="introduction_to_matrices.html">1.3. Introduction to Matrices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matrix_add_sub.html">1.4. Matrix Algebra</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">1.5. Matrix Multiplication</a></li>
+<li class="toctree-l2"><a class="reference internal" href="special_matrices.html">1.6. Special Matrices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="inverse_matrices_determinants.html">1.7. Inverse Matrices and Determinants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="determinants_3x3.html">1.8. Determinants of 3 x 3 Matrices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="properties_of_determinants.html">1.9. Properties of Determinants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="row_reduction_methods.html">1.10. Row Reduction Methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="inversion_by_gauss_jordan.html">1.11. Inversion by the Gauss-Jordan Method</a></li>
+<li class="toctree-l2"><a class="reference internal" href="eigenvalues_eigenvectors.html">1.12. Eigenvalues and Eigenvectors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="eigenvalues_eigenvectors_3x3.html">1.13. 3 x 3 Eigenvalues and Eigenvectors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linear_systems_exercises.html">1.14. Exercises: Problem Sheet 1</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="calculus_introduction.html">2. Calculus of One Variable</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="introduction_to_programming.html">3. Guided Programming</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="simple_calculations.html">3.1. Simple Calculations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="variables.html">3.2. Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="input_output.html">3.3. Input/Output</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quadratic_equations.html">3.4. Guided Programming 1: Quadratic Equation</a></li>
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-launch-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Launch interactive content">
+    <i class="fas fa-rocket"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://colab.research.google.com/github/executablebooks/jupyter-book/blob/master/ExampleBook/matrix_multiplication.ipynb" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch on Colab"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img alt="Colab logo" src="_static/images/logo_colab.png">
+  </span>
+<span class="btn__text-container">Colab</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="initThebeSBT()"
+  class="btn btn-sm btn-launch-thebe dropdown-item"
+  title="Launch Thebe"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-play"></i>
+  </span>
+<span class="btn__text-container">Live Code</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="_sources/matrix_multiplication.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Matrix Multiplication</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#motivation">Motivation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#derivation-in-the-case-of-simultaneous-equations">Derivation in the case of simultaneous equations</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#general-multiplication-of-matrices">General Multiplication of Matrices</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="matrix-multiplication">
+<span id="sec-matrix-multiplication-1"></span><h1><span class="section-number">1.5. </span>Matrix Multiplication<a class="headerlink" href="#matrix-multiplication" title="Link to this heading">#</a></h1>
+<section id="motivation">
+<h2>Motivation<a class="headerlink" href="#motivation" title="Link to this heading">#</a></h2>
+<p>Recall that we would like to write a system of <span class="math notranslate nohighlight">\(m\)</span> equations in <span class="math notranslate nohighlight">\(n\)</span> unknowns</p>
+<div class="amsmath math notranslate nohighlight">
+\[\begin{equation*}
+\left.\begin{array}{ccccccccc}
+a_{11} x_1 &amp;+&amp; a_{12} x_2 &amp;+&amp; \cdots &amp;+&amp; a_{1n}x_n &amp;=&amp; b_1 \\
+a_{21} x_1 &amp;+&amp; a_{22} x_2 &amp;+&amp; \cdots &amp;+&amp; a_{2n}x_n &amp;=&amp; b_2 \\
+           &amp; &amp;            &amp;\vdots&amp;   &amp; &amp;           &amp; &amp; \vdots \\
+a_{m1} x_1 &amp;+&amp; a_{m2} x_2 &amp;+&amp; \cdots &amp;+&amp; a_{mn}x_n &amp;=&amp; b_m \\ 
+\end{array}\right\}
+\tag{1.22}
+\end{equation*}\]</div>
+<p>in matrix form</p>
+<div class="amsmath math notranslate nohighlight">
+\[\begin{equation*}
+{\bf{A}}\boldsymbol{x} = \boldsymbol{b},
+\tag{1.23}
+\end{equation*}\]</div>
+<p>where</p>
+<div class="amsmath math notranslate nohighlight">
+\[\begin{equation*}
+{\bf{A}} = \left(\begin{array}{cccc} 
+a_{11} &amp; a_{12} &amp; \cdots &amp; a_{1n} \\
+a_{21} &amp; a_{22} &amp; \cdots &amp; a_{2n} \\
+\vdots &amp; \vdots &amp; &amp; \vdots \\
+a_{m1} &amp; a_{m2} &amp; \cdots &amp; a_{mn}
+\end{array}\right),
+\quad
+\boldsymbol{x} = \left(\begin{array}{l}
+x_1 \\ x_2 \\ \vdots \\ x_n \end{array}\right),
+\quad
+\boldsymbol{b} = \left(\begin{array}{l}
+b_1 \\ b_2 \\ \vdots \\ b_m \end{array}\right).
+\tag{1.24}
+\end{equation*}\]</div>
+<p>This is a generalisation of the first algebraic equation we considered in (1.1), <span class="math notranslate nohighlight">\(ax = b\)</span>, where we found there were three possible classes of solution: unqiue solution, no solution or infinitely many solutions.</p>
+<p>The statement <span class="math notranslate nohighlight">\({\bf{A}}\boldsymbol{x} = \boldsymbol{b}\)</span> in (1.23) means</p>
+<div class="amsmath math notranslate nohighlight">
+\[\begin{equation*}
+{\bf{A}}\times\boldsymbol{x} = \boldsymbol{b},
+\end{equation*}\]</div>
+<p>but we need to define what “<span class="math notranslate nohighlight">\(\times\)</span>” means when we are multiplying matrices together.</p>
+<p>Let’s begin with a case where we know what we would like the answer to be.</p>
+</section>
+<section id="derivation-in-the-case-of-simultaneous-equations">
+<h2>Derivation in the case of simultaneous equations<a class="headerlink" href="#derivation-in-the-case-of-simultaneous-equations" title="Link to this heading">#</a></h2>
+<p>Suppose we have the general simultaneous equations</p>
+<div class="amsmath math notranslate nohighlight">
+\[\begin{equation*}
+\left.\begin{array}{ccccc} 
+\color{blue}a\,\color{black} x_1 \!\!&amp;+&amp;\!\! \color{blue}b\,\color{black} x_2 \!\!&amp;=&amp;\!\! \color{blue}u\,\color{black}~ \\
+\color{red}c\,\color{black} x_1 \!\!&amp;+&amp;\!\! \color{red}d\,\color{black} x_2 \!\!&amp;=&amp;\!\! \color{red}v\,\color{black}~ \\
+\end{array}\right\} \tag{1.25}
+\end{equation*}\]</div>
+<p>for unknowns <span class="math notranslate nohighlight">\(x_1\)</span> and <span class="math notranslate nohighlight">\(x_2\)</span>.  Recall that this defines for us a matrix of coefficients, <span class="math notranslate nohighlight">\({\bf{A}}\)</span> a vector of unknowns, <span class="math notranslate nohighlight">\(\boldsymbol{x}\)</span>, and a vector of right-hand sides, <span class="math notranslate nohighlight">\(\boldsymbol{b}\)</span>, given by</p>
+<div class="amsmath math notranslate nohighlight">
+\[\begin{equation*}
+{\bf{A}} = \left(\begin{array}{cc} \color{blue}a &amp; \color{blue}b \\ \color{red}c &amp; \color{red}d \end{array}\right),
+\quad
+\boldsymbol{x} =  \left(\begin{array}{c} x_1 \\ x_2 \end{array}\right),
+\quad
+\boldsymbol{b} =  \left(\begin{array}{c} \color{blue}u \\ \color{red}v \end{array}\right)
+\end{equation*}\]</div>
+<div class="admonition-motivtion admonition">
+<p class="admonition-title">Motivtion</p>
+<p>We want <span class="math notranslate nohighlight">\({\bf{A}}\times\boldsymbol{x} = \boldsymbol{b}\)</span> to mean the same as (1.25)</p>
+</div>
+<p>Remember from the definition of <strong>equality</strong> that if <span class="math notranslate nohighlight">\({\bf{A}}\times\boldsymbol{x}=\boldsymbol{b}\)</span> then <span class="math notranslate nohighlight">\({\bf{A}}\times\boldsymbol{x}\)</span> must have the same <strong>order</strong> as <span class="math notranslate nohighlight">\(\boldsymbol{b}\)</span>.</p>
+<p>Since <span class="math notranslate nohighlight">\({\bf{b}}\)</span> is a <span class="math notranslate nohighlight">\(2\times1\)</span> column vector that means that <span class="math notranslate nohighlight">\({\bf{A}}\times\boldsymbol{x}\)</span> must also be a <span class="math notranslate nohighlight">\(2\times1\)</span> column vector.  Hence, we can write</p>
+<div class="amsmath math notranslate nohighlight">
+\[\begin{equation*}
+{\bf{A}}\times\boldsymbol{x} = 
+\left(\begin{array}{cc} \color{blue}a &amp; \color{blue}b \\ \color{red}c &amp; \color{red}d \end{array}\right)
+\times
+\left(\begin{array}{c} x_1 \\ x_2 \end{array}\right) =
+\left(\begin{array}{c} ? \\ ? \end{array}\right) =
+\left(\begin{array}{c} \color{blue}u \\ \color{red}v \end{array}\right) = \boldsymbol{b}.
+\end{equation*}\]</div>
+<p>What goes in place of the question marks?  We want <span class="math notranslate nohighlight">\({\bf{A}}\times\boldsymbol{x} = \boldsymbol{b}\)</span> to mean the same as (1.25).  If we take the top question mark to be <span class="math notranslate nohighlight">\(\color{blue}a\color{black}\,x_1 + \color{blue}b\color{black}\,x_2\)</span> and the bottom question mark to be <span class="math notranslate nohighlight">\(\color{red}c\color{black}\,x_1 + \color{red}d\color{black}\,x_2\)</span> then we have</p>
+<div class="amsmath math notranslate nohighlight">
+\[\begin{equation*}
+{\bf{A}}\times\boldsymbol{x} = 
+\left(\begin{array}{cc} \color{blue}a &amp; \color{blue}b \\ \color{red}c &amp; \color{red}d \end{array}\right)
+\times
+\left(\begin{array}{c} x_1 \\ x_2 \end{array}\right) = 
+\boxed{\left(\begin{array}{c} \color{blue}a\color{black}\,x_1 + \color{blue}b\color{black}\,x_2 \\
+\color{red}c\color{black}\,x_1 + \color{red}d\color{black}\,x_2 \end{array}\right) =
+\left(\begin{array}{c} \color{blue}u \\ \color{red}v \end{array}\right)}
+= \boldsymbol{b}.
+\end{equation*}\]</div>
+<p>and we see that the quantity in the box represents (1.25).  Using the definition of matrix equality again, the elements in the left hand column vector in the box must exactly equal the elements in the right hand column vector in the box.</p>
+<p>The first <em>row</em> in the box represents the first equation in (1.25) and the second <em>row</em> in the box represents the second equation in (1.25).</p>
+<p>If we move the box we see that we have <strong>defined</strong> what we mean by <span class="math notranslate nohighlight">\({\bf{A}}\times\boldsymbol{x}\)</span></p>
+<div class="amsmath math notranslate nohighlight">
+\[\begin{equation*}
+\boxed{
+{\bf{A}}\times\boldsymbol{x} = 
+\left(\begin{array}{cc} \color{blue}a &amp; \color{blue}b \\ \color{red}c &amp; \color{red}d \end{array}\right)
+\times
+\left(\begin{array}{c} x_1 \\ x_2 \end{array}\right) = 
+\left(\begin{array}{c} \color{blue}a\color{black}\,x_1 + \color{blue}b\color{black}\,x_2 \\
+\color{red}c\color{black}\,x_1 + \color{red}d\color{black}\,x_2 \end{array}\right)} =
+\left(\begin{array}{c} \color{blue}u \\ \color{red}v \end{array}\right)
+= \boldsymbol{b}.
+\end{equation*}\]</div>
+<div class="admonition-matrix-multiplication admonition">
+<p class="admonition-title">Matrix Multiplication</p>
+<p>To calculate <span class="math notranslate nohighlight">\({\bf{A}}\times\boldsymbol{x}\)</span> where</p>
+<div class="amsmath math notranslate nohighlight">
+\[\begin{equation*}
+{\bf{A}} = \left(\begin{array}{cc} a &amp; b \\ c &amp; d \end{array}\right),
+\quad
+\boldsymbol{x} =  \left(\begin{array}{c} x_1 \\ x_2 \end{array}\right),
+\end{equation*}\]</div>
+<p>we first write down a column vector whose top entry is given by multiplying each element of the top row of <span class="math notranslate nohighlight">\({\bf{A}}\)</span> with each element of <span class="math notranslate nohighlight">\(\boldsymbol{x}\)</span> and summing</p>
+<div class="amsmath math notranslate nohighlight">
+\[\begin{equation*}
+{\bf{A}}\times\boldsymbol{x} = 
+\left(\begin{array}{cc} \color{blue}a &amp; \color{blue}b \\ \color{gray}c &amp; \color{gray}d \end{array}\right)
+\times
+\left(\begin{array}{c} x_1 \\ x_2 \end{array}\right) =
+\left(\begin{array}{c} \color{blue}a\color{black}\,x_1 + \color{blue}b\color{black}\,x_2 \\ \color{gray}\cdot \end{array}\right).
+\end{equation*}\]</div>
+<p>The bottom entry is given by multiplying each element of the bottom row of <span class="math notranslate nohighlight">\({\bf{A}}\)</span> with each element of <span class="math notranslate nohighlight">\(\boldsymbol{x}\)</span> and summing</p>
+<div class="amsmath math notranslate nohighlight">
+\[\begin{equation*}
+{\bf{A}}\times\boldsymbol{x} = 
+\left(\begin{array}{cc} \color{blue}a &amp; \color{blue}b \\ \color{red}c &amp; \color{red}d \end{array}\right)
+\times
+\left(\begin{array}{c} x_1 \\ x_2 \end{array}\right) =
+\left(\begin{array}{c} \color{blue}a\color{black}\,x_1 + \color{blue}b\color{black}\,x_2 \\ 
+\color{red}c\color{black}\,x_1 + \color{red}d\color{black}\,x_2
+\end{array}\right).
+\end{equation*}\]</div>
+</div>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\({\bf{A}}\times\boldsymbol{x}\)</span> is written as <span class="math notranslate nohighlight">\({\bf{A}}\boldsymbol{x}\)</span></p></li>
+<li><p><strong>WARNING</strong><br />
+A common error is to treat matrix multiplication like matrix addition and subtraction.  With matrix addition we just add elements together, with matrix subtraction we just subtract one element from another.  With matrix multiplication <strong>we do not just multiply elements together</strong>.</p></li>
+</ul>
+</section>
+<section id="general-multiplication-of-matrices">
+<h2>General Multiplication of Matrices<a class="headerlink" href="#general-multiplication-of-matrices" title="Link to this heading">#</a></h2>
+<p>Let <span class="math notranslate nohighlight">\({\bf{A}}\)</span> be an <span class="math notranslate nohighlight">\(m \times n\)</span> matrix and <span class="math notranslate nohighlight">\({\bf{B}}\)</span> be a <span class="math notranslate nohighlight">\(p \times q\)</span> matrix.</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\({\bf{A}}{\bf{B}}\)</span> exists if (and only if) <span class="math notranslate nohighlight">\(n=p\)</span></p></li>
+<li><p>The result <span class="math notranslate nohighlight">\({\bf{A}}{\bf{B}}\)</span> is an <span class="math notranslate nohighlight">\(m\times q\)</span> matrix.</p></li>
+</ul>
+<div class="amsmath math notranslate nohighlight">
+\[\begin{equation*}
+\begin{array}{ccccc}
+\ {\bf{A}}\!\! &amp;\times&amp; \!\!{\bf{B}} \ &amp;=&amp; {\bf{C}} \\
+\color{blue}m\ \color{black}\times &amp; \!\!\!\!
+\underbrace{\color{red}n \qquad \color{red}p}_{\large\textrm{equal}} \!\!\!\!
+&amp; \color{black} \times \ \color{blue} q &amp;&amp; \color{blue}m\color{black}\times \color{blue}q
+\end{array}
+\end{equation*}\]</div>
+<p>If <span class="math notranslate nohighlight">\(n \ne p\)</span>, the product <span class="math notranslate nohighlight">\({\bf{A}}{\bf{B}}\)</span> <strong>does not exist</strong>.</p>
+<div class="admonition-existence admonition">
+<p class="admonition-title">Existence</p>
+<p>For the product <span class="math notranslate nohighlight">\({\bf{A}}{\bf{B}}\)</span> to exist the number of columns of <span class="math notranslate nohighlight">\({\bf{A}}\)</span> must equal the number of rows of <span class="math notranslate nohighlight">\({\bf{B}}\)</span>.</p>
+</div>
+<p>In the example in the previous section we saw how <span class="math notranslate nohighlight">\({\bf{A}}\boldsymbol{x} = \boldsymbol{b}\)</span>, where</p>
+<div class="amsmath math notranslate nohighlight">
+\[\begin{equation*}
+\begin{array}{rrr}
+{\bf{A}} = \left(\begin{array}{cc} a &amp; b \\ c &amp; d \end{array}\right),
+&amp;
+\quad\boldsymbol{x} =  \left(\begin{array}{c} x_1 \\ x_2 \end{array}\right),
+&amp;
+\quad\boldsymbol{b} =  \left(\begin{array}{c} u \\ v \end{array}\right) \\
+\color{blue}2\color{black}\times\color{red}2 \ \ \ &amp; \color{red}2\color{black}\times\color{blue}1 \ \ &amp;\color{blue}2\color{black}\times\color{blue}1 
+\end{array}
+\end{equation*}\]</div>
+<p>We had <span class="math notranslate nohighlight">\(\color{blue}m\color{black}=\color{blue}2\)</span>, <span class="math notranslate nohighlight">\(\color{red}n\color{black}=\color{red}2\)</span>; <span class="math notranslate nohighlight">\(\color{red}p\color{black}=\color{red}2\)</span>, <span class="math notranslate nohighlight">\(\color{blue}q\color{black}=\color{blue}1\)</span>. Because <span class="math notranslate nohighlight">\(\color{red}n\color{black}=\color{red}p\)</span> we were able to multiply <span class="math notranslate nohighlight">\({\bf{A}}\)</span> by <span class="math notranslate nohighlight">\(\boldsymbol{x}\)</span> and the result was an <span class="math notranslate nohighlight">\(\color{blue}m\color{black}\times\color{blue}q\)</span> matrix.</p>
+<p>If <span class="math notranslate nohighlight">\({\bf{A}}\)</span> is a <span class="math notranslate nohighlight">\(3\times 2\)</span> matrix and <span class="math notranslate nohighlight">\({\bf{B}}\)</span> is a <span class="math notranslate nohighlight">\(2\times 2\)</span> matrix then <span class="math notranslate nohighlight">\({\bf{A}}{\bf{B}}\)</span> is a <span class="math notranslate nohighlight">\(3\times 2\)</span> matrix <strong>but</strong> <span class="math notranslate nohighlight">\({\bf{B}}{\bf{A}}\)</span> does not exist.</p>
+<div class="admonition-order-of-multiplication admonition">
+<p class="admonition-title">Order of multiplication</p>
+<p>We see therefore that unlike multiplication that we are familiar with, <strong>we do not have</strong> in general that <span class="math notranslate nohighlight">\({\bf{A}}{\bf{B}} = {\bf{B}}{\bf{A}}\)</span>.</p>
+</div>
+<p>If <span class="math notranslate nohighlight">\({\bf{A}}\)</span> is a <span class="math notranslate nohighlight">\(3\times 2\)</span> matrix and <span class="math notranslate nohighlight">\({\bf{B}}\)</span> is a <span class="math notranslate nohighlight">\(2\times 3\)</span> matrix then <span class="math notranslate nohighlight">\({\bf{A}}{\bf{B}}\)</span> is a <span class="math notranslate nohighlight">\(3\times 3\)</span> matrix.  But <span class="math notranslate nohighlight">\({\bf{B}}{\bf{A}}\)</span> is a <span class="math notranslate nohighlight">\(2\times 2\)</span> matrix and so by the rules of matrix equality, <span class="math notranslate nohighlight">\({\bf{B}}{\bf{A}}\)</span> cannot equal <span class="math notranslate nohighlight">\({\bf{A}}{\bf{B}}\)</span> as the matrices <span class="math notranslate nohighlight">\({\bf{A}}{\bf{B}}\)</span> and <span class="math notranslate nohighlight">\({\bf{B}}{\bf{A}}\)</span> have different orders.</p>
+<div class="proof definition admonition" id="definition-0">
+<p class="admonition-title"><span class="caption-number">Definition 1.5 </span> (Rule for Matrix Multiplication)</p>
+<section class="definition-content" id="proof-content">
+<p>When <span class="math notranslate nohighlight">\({\bf{C}} = {\bf{A}}{\bf{B}}\)</span> exists, the element <span class="math notranslate nohighlight">\(c_{ij}\)</span> in the <span class="math notranslate nohighlight">\(i^{\textrm{th}}\)</span> row and <span class="math notranslate nohighlight">\(j^{\textrm{th}}\)</span> column of <span class="math notranslate nohighlight">\({\bf{C}}\)</span> is obtained by taking the “product” of the <span class="math notranslate nohighlight">\(i^{\textrm{th}}\)</span> row of <span class="math notranslate nohighlight">\({\bf{A}}\)</span> with the <span class="math notranslate nohighlight">\(j^{\textrm{th}}\)</span> column of <span class="math notranslate nohighlight">\({\bf{B}}\)</span></p>
+<div class="amsmath math notranslate nohighlight">
+\[\begin{equation*}
+c_{ij} = \sum_{r} a_{ir} b_{rj}
+\end{equation*}\]</div>
+</section>
+</div><div class="proof example admonition" id="example-1">
+<p class="admonition-title"><span class="caption-number">Example 1.9 </span></p>
+<section class="example-content" id="proof-content">
+<p>Calculate the product</p>
+<div class="amsmath math notranslate nohighlight">
+\[\begin{equation*}
+\left(\begin{array}{rr} 1 &amp; -1 \\ 2 &amp; 1\end{array}\right)
+\left(\begin{array}{rr} 0 &amp;  1 \\ 3 &amp; 2\end{array}\right)
+\end{equation*}\]</div>
+<div class="dropdown admonition">
+<p class="admonition-title">Solution</p>
+<div class="amsmath math notranslate nohighlight">
+\[\begin{equation*}
+\left(\begin{array}{rr} 1 &amp; -1 \\ 2 &amp; 1\end{array}\right)
+\left(\begin{array}{rr} 0 &amp;  1 \\ 3 &amp; 2\end{array}\right)
+=\left(\begin{array}{rr} -3 &amp;  -1 \\ 3 &amp; 4\end{array}\right)
+\end{equation*}\]</div>
+</div>
+</section>
+</div><div class="proof example admonition" id="example-2">
+<p class="admonition-title"><span class="caption-number">Example 1.10 </span></p>
+<section class="example-content" id="proof-content">
+<p>Calculate the product</p>
+<div class="amsmath math notranslate nohighlight">
+\[\begin{equation*}
+\left(\begin{array}{rr} 0 &amp;  1 \\ 3 &amp; 2\end{array}\right)
+\left(\begin{array}{rr} 1 &amp; -1 \\ 2 &amp; 1\end{array}\right)
+\end{equation*}\]</div>
+<div class="dropdown admonition">
+<p class="admonition-title">Solution</p>
+<div class="amsmath math notranslate nohighlight">
+\[\begin{equation*}
+\left(\begin{array}{rr} 0 &amp;  1 \\ 3 &amp; 2\end{array}\right)
+\left(\begin{array}{rr} 1 &amp; -1 \\ 2 &amp; 1\end{array}\right)
+=\left(\begin{array}{rr} 2 &amp;  1 \\ 7 &amp; -1\end{array}\right)
+\end{equation*}\]</div>
+</div>
+</section>
+</div><ul class="simple">
+<li><p><strong>Note</strong>: for matrices <span class="math notranslate nohighlight">\({\bf{A}}\)</span> and <span class="math notranslate nohighlight">\({\bf{B}}\)</span> in the previous two examples, we have shown that <span class="math notranslate nohighlight">\({\bf{A}}{\bf{B}}\)</span> does not equal <span class="math notranslate nohighlight">\({\bf{B}}{\bf{A}}\)</span>.</p></li>
+</ul>
+<div class="proof example admonition" id="example-3">
+<p class="admonition-title"><span class="caption-number">Example 1.11 </span></p>
+<section class="example-content" id="proof-content">
+<p>Given that</p>
+<div class="amsmath math notranslate nohighlight">
+\[\begin{equation*}
+{\bf{A}} = \left(\begin{array}{ccc} 4 &amp; 1 &amp; 6 \\ 3 &amp; 2 &amp; 1 \end{array}\right)
+~\textrm{is a}~2\times 3~\textrm{matrix and}~
+{\bf{B}} = \left(\begin{array}{cc} 1 &amp; 1 \\ 1 &amp; 2 \\ 1 &amp; 0 \end{array}\right)
+~\textrm{is a}~3\times 2~\textrm{matrix},
+\end{equation*}\]</div>
+<p>calculate <span class="math notranslate nohighlight">\({\bf{A}} + {\bf{B}}\)</span>, <span class="math notranslate nohighlight">\({\bf{A}} - {\bf{B}}\)</span>, <span class="math notranslate nohighlight">\({\bf{A}}{\bf{B}}\)</span>, and <span class="math notranslate nohighlight">\({\bf{B}}{\bf{A}}\)</span> where they exist.</p>
+<div class="dropdown admonition">
+<p class="admonition-title">Solution</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\({\bf{A}} + {\bf{B}}\)</span> does not exist as the orders of <span class="math notranslate nohighlight">\({\bf{A}}\)</span> and <span class="math notranslate nohighlight">\({\bf{B}}\)</span> are not equal.</p></li>
+<li><p><span class="math notranslate nohighlight">\({\bf{A}} - {\bf{B}}\)</span> does not exist as the orders of <span class="math notranslate nohighlight">\({\bf{A}}\)</span> and <span class="math notranslate nohighlight">\({\bf{B}}\)</span> are not equal.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\displaystyle {\bf{A}}{\bf{B}} = \left(\begin{array}{ccc} 4 &amp; 1 &amp; 6 \\ 3 &amp; 2 &amp; 1 \end{array}\right)
+\left(\begin{array}{cc} 1 &amp; 1 \\ 1 &amp; 2 \\ 1 &amp; 0 \end{array}\right)
+= \left(\begin{array}{cc} 11 &amp; 7 \\ 6 &amp; 7 \end{array}\right)\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(\displaystyle {\bf{B}}{\bf{A}} = \left(\begin{array}{cc} 1 &amp; 1 \\ 1 &amp; 2 \\ 1 &amp; 0 \end{array}\right)
+\left(\begin{array}{ccc} 4 &amp; 1 &amp; 6 \\ 3 &amp; 2 &amp; 1 \end{array}\right)
+= \left(\begin{array}{ccc} 7 &amp; 3 &amp; 7 \\ 10 &amp; 5 &amp; 8 \\ 4 &amp; 1 &amp; 6 \end{array}\right)\)</span></p></li>
+</ul>
+<p>Note again that <span class="math notranslate nohighlight">\({\bf{A}}{\bf{B}}\ne{\bf{B}}{\bf{A}}\)</span>, <span class="math notranslate nohighlight">\({\bf{A}}{\bf{B}}\)</span> is a <span class="math notranslate nohighlight">\(2\times 2\)</span> matrix, but <span class="math notranslate nohighlight">\({\bf{B}}{\bf{A}}\)</span> is a <span class="math notranslate nohighlight">\(3 \times 3\)</span> matrix.</p>
+</div>
+</section>
+</div></section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "executablebooks/jupyter-book",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./."
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="matrix_add_sub.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title"><span class="section-number">1.4. </span>Matrix Algebra</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="special_matrices.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title"><span class="section-number">1.6. </span>Special Matrices</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#motivation">Motivation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#derivation-in-the-case-of-simultaneous-equations">Derivation in the case of simultaneous equations</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#general-multiplication-of-matrices">General Multiplication of Matrices</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Matthew Scase
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
